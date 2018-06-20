@@ -520,11 +520,16 @@ How it works:
 	*************************************************************************/
 		this.fn_moveElement = function(jElement, jOverTheElement, scale, shift) {
 			
+			// When using transform (as we do) we need to consider that maybe the viewport is scaled. So we calculate how much it is scaled						
+			var originSizes = game.jBoard.attr('viewBox').split(/\s+|,/);  // [0, 0, 630, 300]  , so the width is [2]-[0]
+			var widthScale  = game.jBoard.width() / (originSizes[2] - originSizes[0]);
+			var heightScale = game.jBoard.height() / (originSizes[3] - originSizes[1]);
+
 			//alert();
 			var shift_x 	= (typeof(shif) === 'undefined')? 0 : Math.floor(jElement.get(0).getBBox().width);
 			var scale 		= (typeof(scale) === 'undefined')? '' : ' scale('+scale+')';
-			var the_x 	= Math.floor( jOverTheElement.offset().left - game.jBoard.offset().left ) + shift_x;
-			var the_y 	= Math.floor( jOverTheElement.offset().top - game.jBoard.offset().top ) ;
+			var the_x 	= ( Math.floor( jOverTheElement.offset().left - game.jBoard.offset().left ) + shift_x ) / widthScale ;
+			var the_y 	= Math.floor( jOverTheElement.offset().top - game.jBoard.offset().top ) / heightScale ;
 
 			jElement.attr('transform', 'translate('+the_x+','+the_y+')'+scale);
 			//jElement.css('x', the_x);
