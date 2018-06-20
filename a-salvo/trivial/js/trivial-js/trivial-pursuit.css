@@ -1,0 +1,46 @@
+
+.board-svg-container {	
+	height: 			100%;
+	padding-top: 		30px;
+	text-align: 		center;
+}
+.board-svg-container #board {
+	height: 			100%;
+}
+.player #player-icon {			
+	-webkit-transition: all 2s; /* Safari */
+	transition: 		all 2s;
+}
+
+
+@keyframes up {  
+	0% 		{ opacity: 0; } 
+	90% 	{ opacity: 0.6; } 
+	100% 	{ opacity: 0; } 
+}
+
+.casilla_animada {
+	animation: 	up 1.5s infinite;
+	fill: 		white;
+	stroke: 	black;
+	stroke-width: 	2px;
+}
+.orange-bg { fill: orange; }
+
+#current-player-info #current-player-panel {
+	opacity: 	0.8;
+}
+
+/*the questions*/
+.answered { font-weight: bold; }
+.answered.g { color: green; }
+.answered.b { color: red; }
+
+/*genericos para svg*/
+.transparent { fill: 	none; }
+.transparent-and-border {
+	fill: 	none;
+	stroke: 	black;
+	stroke-width: 	2px;
+}
+
