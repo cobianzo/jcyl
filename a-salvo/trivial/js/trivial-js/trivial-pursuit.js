@@ -33,20 +33,26 @@ How it works:
 			// Properties for the game: options, jElement
 			// access with game.options
 			game.optionsDefault = {				
-				playerNames: 			[ "Alvaroa", "Peddro" ], // send the real array of names when creating the game
+				playerNames: 		[ "Alvaroa", "Peddro" ], // send the real array of names when creating the game
 				board_svg_file:  	'boardtrivial-board.svg',
-				num_casillas: 		10
+				num_casillas: 		10,
+				questions_file: 	'questions.json',
+				time_per_question: 	10 // in secs
 				// player_src: 		'player.png'
 			};
 
 			game.jElement 	= jEl; 		// the parent container html jqeury. (the #playground)
-			game.jBoard 	= null;
+			game.jBoard 	= null; 	// the <svg>
+			game.jQuestionContainer = null;  // where the modal window is created to display the question and answers
 
 			game.players 		= [];   // see below, the componenr Player(i). Every player is one of this Objects. game.players[0] corresponds to player 1
 			game.current_player = 0; 	// From 1 to 4. To access to the current player object use game.players[game.current_player - 1]
 			game.player_colors 	= [ 'red', 'blue', 'yellow', 'orange'];
 
+			game.dice 			= null;
+
 			// related also to the quesitos. Every quesito correspond to a type, and takes the colour of the type
+			game.countdown_interval = null
 			game.typeQuestions 		= {
 				type_1: 	{ name: 'colores', color: 'blue' } ,
 				type_2: 	{ name: 'animales', color: 'green' } ,
@@ -175,7 +181,21 @@ How it works:
 					game.jElement.append(game.jQuestionContainer);
 
 
-					// init the logic. We set to the last player and move to the next one (which will set it to the 1st one)
+					// init the logic. 
+
+					// 		Init the questions array from file
+					$.getJSON( game.options.questions_file, function( data ) {
+						
+						game.questions = data;
+					  	$.each( game.questions, function(index, value) { // index y type_X, value is array of questions
+							game.questions[ index+"_already_asked"] = [];
+						} );
+						console.log(game.questions);
+					    
+					});
+					
+
+					// 		We set to the last player and move to the next one (which will set it to the 1st one)
 					game.current_player 	= game.players.length; 		
 					game.fn_giveTurnToNextPlayer();
 
@@ -280,10 +300,24 @@ How it works:
 					<div class="modal-dialog modal-dialog-centered"> <div class="modal-content">\
 					<div class="modal-header"></div>\
 					<div class="modal-body"><ul></ul></div>\
-					<div class="modal-footer"></div></div></div></div>'); 
+					<div class="modal-footer"><div class="countdown w-50"></div><div class="tema w-50"></div></div>\
+					</div></div></div>'); // close content dialog and modal
 		
 				game.jQuestionContainer.find('.modal-header').text(theQuestion.question);
-				game.jQuestionContainer.find('.modal-footer').text(game.typeQuestions[typeOfQuestion].name);
+				game.jQuestionContainer.find('.tema').text(game.typeQuestions[typeOfQuestion].name);
+				game.jQuestionContainer.find('.countdown').text(game.options.time_per_question);
+
+				// Creation of the countrdown and behaviour
+				var timeleft = 10;
+				game.countdown_interval = setInterval(function(){
+					var time_left = parseInt(game.jQuestionContainer.find('.countdown').text()) - 1;
+					game.jQuestionContainer.find('.countdown').text(time_left);
+  						
+  					if(time_left <= 0) {    					
+    					// proceed to the time left. Close the question , show a message and 
+    					game.fn_answerQuestion( game.jQuestionContainer.find('.countdown') );
+  					}
+				},1000);
 
 				// apply class g or b to every answer, so we know which is the right one, and paint it properly
 				for ( var i = 0; i < theQuestion.answers.length; i++ ) {
@@ -307,7 +341,10 @@ How it works:
 			}
 
 			this.fn_answerQuestion = function(jAnswer) {
-								
+
+				// stop timer
+				clearInterval(game.countdown_interval);
+
 				// compling info
 				var is_right = jAnswer.hasClass('g');
 
@@ -317,13 +354,19 @@ How it works:
 
 				if (is_right) {
 					//alert('good answer');
-					// process el quesito, y los puntos, y numero de tirada
-					
+					// process el quesito if la casilla es de quesito, y los puntos, y numero de tirada
+					var jCurrentCasilla = game.jBoard.find("#casilla_"+game.players[game.current_player - 1].casilla);
+					if (jCurrentCasilla.attr('data-queso') == "true"){
+						console.log("anadiendo QUESITO "+jCurrentCasilla.attr('data-tema')+" a player "+game.current_player);
+						game.players[game.current_player - 1].fn_addQuesito(jCurrentCasilla.attr('data-tema'));
+					}
+					game.players[game.current_player - 1].fn_addPoint();
+
 				}else {
 					//alert('bad answer');
 					// process el el numero de tirada
 				}
-
+				
 				// destroy the modal dialog with the question
 				setTimeout( function() {
 					
@@ -367,6 +410,13 @@ How it works:
 						game.fn_moveElement( panel, game.jBoard.find('#position-markers #position-'+k), 0.7 );
 					}
 				}
+
+				// update players icons
+				$.each(game.players, function(index, player) {
+					var scale = (player.number == game.current_player )? 1 : 0.6;
+					game.fn_updateOnlyScale(player.jPlayerIcon, scale);
+				}); 
+				 //fn_updateOnlyScale
 
 				// update dice with blink effect
 				game.dice.jElement.find("#dice-bg").attr('class','casilla_animada orange-bg');
@@ -467,6 +517,7 @@ How it works:
 				this.jElement = null;
 				this.jPlayerIcon = null;
 				this.jPlayerInfo = null;
+				this.jPuntuacion = null;
 
 				// self 	= this;   <<<<< using self  doesnt work inside the fns
 
@@ -483,8 +534,11 @@ How it works:
 					this.jElement 	 = jPlayer;
 					this.jPlayerIcon = jPlayer.find('#player-icon');
 					this.jPlayerInfo = jPlayer.find('#player-info');
+					this.jPuntuacion = this.jPlayerInfo.find('text').eq(0);
+					this.jPlayerName = this.jPlayerInfo.find('text').eq(1);
 
 					this.jPlayerInfo.find('#player-panel').css('fill', color);
+					this.jPlayerName.text( this.name );
 
 					// creacion player
 					game.jBoard.append(jPlayer);					
@@ -495,6 +549,18 @@ How it works:
 
 
 					return this;
+				}
+
+				// paints a quesito in the wheel of quesitos. quesito_number = [1..5]. To access to the points use parseInt(player.jPuntuacion.text()) 
+				this.fn_addPoint = function() { 
+					console.log("add one point to player "+this.number+" ("+this.name+") ");
+					this.jPuntuacion.text( parseInt(this.jPuntuacion.text()) + 1 );
+				}
+				this.fn_addQuesito = function(quesito_number) {  
+					var color_quesito 	= game.typeQuestions['type_'+quesito_number].color;
+					console.log("anadiendo QUESITO "+quesito_number+" ("+color_quesito+") a player "+this.number+" /"); 
+					this.jPlayerInfo.find('#quesito #queso-'+quesito_number).addClass('on').css('fill', color_quesito);
+					return true;
 				}
 
 				// movs the plaver. usign the fn moveElement
@@ -516,7 +582,7 @@ How it works:
 
 
 	/*************************************************************************
-	************      	GENERIC FUNCTIONS IN THE GAME
+	************      	GENERIC FUNCTIONS IN THE GAME ( kind of generic helpers)
 	*************************************************************************/
 		this.fn_moveElement = function(jElement, jOverTheElement, scale, shift) {
 			
@@ -538,9 +604,22 @@ How it works:
 
 		}
 
+		// for an element like <g transform="translate(43 234) scale(0.5 0.5)">   replace only the scale leaving the translate the same
+		this.fn_updateOnlyScale = function(jElement, scaleValue) {
 
+			var regex = /scale\(.+?\)/i ;  // matches anything like  "scale(2.3 2)"
+			var transformAttr = jElement.attr('transform');
+			var match = regex.exec(transformAttr);  // now match[0] should be "scale(2.3 2)"
+			if (match.length) {
+				var newTransform = transformAttr.replace(match[0], " scale("+scaleValue+") ");
+				jElement.attr("transform", newTransform);
+			}
 
-
+			return newTransform;
 		}
-	 
-	}( jQuery ));
+
+
+
+	}
+ 
+}( jQuery ));

@@ -7,7 +7,7 @@
 .board-svg-container #board {
 	height: 			100%;
 }
-.player #player-icon {			
+.player #player-icon, .player #player-info {			
 	-webkit-transition: all 2s; /* Safari */
 	transition: 		all 2s;
 }
@@ -27,14 +27,19 @@
 }
 .orange-bg { fill: orange; }
 
+
+/*players*/
 #current-player-info #current-player-panel {
 	opacity: 	0.8;
 }
+
+
 
 /*the questions*/
 .answered { font-weight: bold; }
 .answered.g { color: green; }
 .answered.b { color: red; }
+.answered.countdown { color: red; }
 
 /*genericos para svg*/
 .transparent { fill: 	none; }
