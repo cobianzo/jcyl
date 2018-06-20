@@ -37,10 +37,10 @@ How it works:
 				board_svg_file:  	'boardtrivial-board.svg',
 				num_casillas: 		10,
 				questions_file: 	'questions.json',
-				time_per_question: 	10 // in secs
-				// player_src: 		'player.png'
+				time_per_question: 	5 // in secs				
 			};
 
+			// Access to HTML objects
 			game.jElement 	= jEl; 		// the parent container html jqeury. (the #playground)
 			game.jBoard 	= null; 	// the <svg>
 			game.jQuestionContainer = null;  // where the modal window is created to display the question and answers
@@ -49,6 +49,7 @@ How it works:
 			game.current_player = 0; 	// From 1 to 4. To access to the current player object use game.players[game.current_player - 1]
 			game.player_colors 	= [ 'red', 'blue', 'yellow', 'orange'];
 
+			// access to the Dice object from outside the Dice
 			game.dice 			= null;
 
 			// related also to the quesitos. Every quesito correspond to a type, and takes the colour of the type
@@ -60,80 +61,9 @@ How it works:
 				type_4: 	{ name: 'historia', color: 'blue' } ,
 				type_5: 	{ name: 'culturas', color: 'cyan' } ,				
 			};
-			game.questions 		= {
 
-				type_1:  [  
-					{
-						question: ' De qué color es el cielo?',
-						answers: [ 'azul', 'verde', 'amarillo', 'rojo'],
-						right_answer:  0,						
-					},
-					{
-						question: 'El agua tiene color?',
-						answers: [ 'sí', 'no' ],
-						right_answer:  1
-					},
-				],
-				type_1_already_asked: [],
-
-				type_2:  [  
-					{
-						question: 'Cuántas patas tiene un perro?',
-						answers: [ '1', '2', '3', '4'],
-						right_answer:  3
-					},
-					{
-						question: 'Cuántos estómagos tiene una vaca?',
-						answers: [ 'hombre pues 1', '2', '3', '1000'],
-						right_answer:  1
-					},
-				],
-				type_2_already_asked: [],
-
-				type_3:  [  
-					{
-						question: 'Quién es pichichi de una liga de fútbol?',
-						answers: [ 'El futbolista más guapo', 'El portero que menos goles ha encajado', 'El jugador que más goles ha marcado'],
-						right_answer:  2
-					},
-					{
-						question: 'Cuántos campeonatos mundiales tiene España?',
-						answers: [ 'ninguno', '1', '2', '3'],
-						right_answer:  1
-					},
-					
-				],
-				type_3_already_asked: [],
-
-				type_4:  [  
-					{
-						question: 'Los Reyes Católicos era Isabel y ...?',
-						answers: [ 'Pedro', 'Antonio', 'Juana la Loca', 'Fernando'],
-						right_answer:  3
-					},
-					{
-						question: 'En qué año se descubrió América?',
-						answers: [ 'año 0', '1988', '1492', '1000'],
-						right_answer:  2
-					},
-				],
-				type_4_already_asked: [],
-
-				type_5:  [  
-					{
-						question: 'Como se dice HOLA en italiano?',
-						answers: [ 'ola', 'all in', 'arrivederci', 'ciao'],
-						right_answer:  3
-					},
-					{
-						question: 'Cuántos idiomas oficiales hay en España?',
-						answers: [ 'ninguno', 'sólo 1: el español', '4: es español, el catalán, el euskera y el gallego', 'más de 1000'],
-						right_answer:  2
-					},
-				],
-				type_5_already_asked: [],
-
-			};
+			// related to the questions
+			game.questions 		= null; 	// seran cargadas de un json desde options.questions_file
 
 	/*************************************************************************
 	************  // THE GAME:  Init Game in the container jEl
@@ -352,19 +282,27 @@ How it works:
 				game.jQuestionContainer.find('.modal-body a').unbind('click');
 				jAnswer.addClass('answered'); // apply css that shows if it's good or bad answer
 
+				// ************** ANSWER IS RIGHT :))) **************
 				if (is_right) {
-					//alert('good answer');
+					
+					// we add one point in any case
+					game.players[game.current_player - 1].fn_addPoint();
+
 					// process el quesito if la casilla es de quesito, y los puntos, y numero de tirada
 					var jCurrentCasilla = game.jBoard.find("#casilla_"+game.players[game.current_player - 1].casilla);
 					if (jCurrentCasilla.attr('data-queso') == "true"){
+
 						console.log("anadiendo QUESITO "+jCurrentCasilla.attr('data-tema')+" a player "+game.current_player);
 						game.players[game.current_player - 1].fn_addQuesito(jCurrentCasilla.attr('data-tema'));
-					}
-					game.players[game.current_player - 1].fn_addPoint();
 
-				}else {
+					}
+
+					
+				}
+				// ************** ANSWER IS WRONG :((( **************
+				else {
 					//alert('bad answer');
-					// process el el numero de tirada
+					// process el el numero de tirada					
 				}
 				
 				// destroy the modal dialog with the question
@@ -373,8 +311,14 @@ How it works:
 					game.jQuestionContainer.find('.question-modal').modal('hide');
 					setTimeout(function(){ game.jQuestionContainer.html(''); }, 1000);
 					
-					// Logic changes Give turn to next player
-					game.fn_giveTurnToNextPlayer();	
+					// Logic changes Give turn to next player if answer was not ok. If not, we reactivate the Dice here
+					if (is_right) {
+						// update dice with blink effect
+						game.dice.allowRoll = true;
+						game.dice.jElement.find("#dice-bg").attr('class','casilla_animada orange-bg');
+					}
+					else
+						game.fn_giveTurnToNextPlayer();	 	// this reactivates the Dice and updates everything visually for the next player
 
 				}, 1500);
 				
@@ -393,14 +337,14 @@ How it works:
 				/* -----  We move to the NEXT PLAYER!!   */
 
 				console.log('Now its turn of '+game.players[game.current_player - 1].name+' ('+game.players[game.current_player - 1].number+')');
-				game.dice.allowRoll = true;
+				
 				
 				// === VISUAL ELEMENTS ===
 				// update current player panel
 				game.jBoard.find('#current-player-info #current-player-panel').css('fill', game.player_colors[game.current_player-1])
 				game.jBoard.find('#current-player-info text:eq(1)').text(game.current_player);
 
-				// update player info panels
+				// update player info panels (position and size)
 				for( var k = 1; k <= game.players.length; k++) {
 					var panel =  game.players[ k - 1 ].jPlayerInfo;
 					if (k == game.current_player) {
@@ -411,14 +355,14 @@ How it works:
 					}
 				}
 
-				// update players icons
+				// update players icons (size)
 				$.each(game.players, function(index, player) {
 					var scale = (player.number == game.current_player )? 1 : 0.6;
 					game.fn_updateOnlyScale(player.jPlayerIcon, scale);
-				}); 
-				 //fn_updateOnlyScale
+				}); 				 
 
 				// update dice with blink effect
+				game.dice.allowRoll = true;
 				game.dice.jElement.find("#dice-bg").attr('class','casilla_animada orange-bg');
 
 			}
