@@ -30,13 +30,17 @@
 
 			if (typeof trivialGame == 'undefined') $.loadScript(screen_vars.parent_folder+'js/trivial-js/trivial-pursuit.js', function(){
 
-				alert('trivial has been loaded');		
-
 				// falta hacerlo online
+
+				if ( typeof(saved_params.questions_filename) === 'undefined') 
+					saved_params.questions_filename = 'questions-1.json';
+				
+				alert('trivial has been loaded, file '+saved_params.questions_filename);		
+				
 				theGame = $( '.game-container' ).trivialGame({
 					playerNames: 	 	saved_params.playerNames.length? saved_params.playerNames : ['player 1', 'player 2'],
 					board_svg_file:    	screen_vars.parent_folder+'js/trivial-js/boardtrivial-board.svg',
-					questions_file:    	screen_vars.parent_folder+'js/trivial-js/questions.json'
+					questions_file:     screen_vars.parent_folder+'js/trivial-js/'+saved_params.questions_filename
 				});
 				console.log(theGame);
     

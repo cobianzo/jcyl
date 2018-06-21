@@ -1,0 +1,67 @@
+{
+	"type_1":  [  
+		{
+			"question": "3  De qué color es el cielo?",
+			"answers": [ "azul", "verde", "amarillo", "rojo"],
+			"right_answer":  "0"
+		},
+		{
+			"question": "3 El agua tiene color?",
+			"answers": [ "sí", "no" ],
+			"right_answer":  "1"
+		}
+	],
+
+	"type_2":  [  
+		{
+			"question": "3 Cuántas patas tiene un perro?",
+			"answers": [ "1", "2", "3", "4"],
+			"right_answer":  "3"
+		},
+		{
+			"question": "3 Cuántos estómagos tiene una vaca?",
+			"answers": [ "hombre pues 1", "2", "3", "1000"],
+			"right_answer":  "1"
+		}
+	],
+
+	"type_3":  [  
+		{
+			"question": "3 Quién es pichichi de una liga de fútbol?",
+			"answers": [ "El futbolista más guapo", "El portero que menos goles ha encajado", "El jugador que más goles ha marcado"],
+			"right_answer":  "2"
+		},
+		{
+			"question": "3 Cuántos campeonatos mundiales tiene España?",
+			"answers": [ "ninguno", "1", "2", "3"],
+			"right_answer":  "1"
+		}		
+	],
+
+	"type_4":  [  
+		{
+			"question": "3 Los Reyes Católicos era Isabel y ...?",
+			"answers": [ "Pedro", "Antonio", "Juana la Loca", "Fernando"],
+			"right_answer":  "3"
+		},
+		{
+			"question": "3 En qué año se descubrió América?",
+			"answers": [ "año 0", "1988", "1492", "1000"],
+			"right_answer":  "2"
+		}
+	],
+
+	"type_5":  [  
+		{
+			"question": "3 Como se dice HOLA en italiano?",
+			"answers": [ "ola", "all in", "arrivederci", "ciao"],
+			"right_answer":  "3"
+		},
+		{
+			"question": "3 Cuántos idiomas oficiales hay en España?",
+			"answers": [ "ninguno", "sólo 1: el español", "4: es español, el catalán, el euskera y el gallego", "más de 1000"],
+			"right_answer":  "2"
+		}
+	]
+
+}

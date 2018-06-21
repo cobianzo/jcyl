@@ -37,7 +37,7 @@ How it works:
 				game_online: 		false,
 				board_svg_file:  	'boardtrivial-board.svg',
 				num_casillas: 		10,
-				questions_file: 	'questions.json',
+				questions_file: 	'questions-2.json',
 				time_per_question: 	5 // in secs				
 			};
 
@@ -121,11 +121,12 @@ How it works:
 					// questions.json:	Init the questions array from file
 					$.getJSON( game.options.questions_file, function( data ) {
 						
+						console.log('questions loaded '+game.options.questions_file);
 						game.questions = data;
-					  	$.each( game.questions, function(index, value) { // index y type_X, value is array of questions
+					  	$.each( game.questions, function(index, value) { // index is 'type_X', value is the array of questions
 							game.questions[ index+"_already_asked"] = [];
 						} );
-						console.log(game.questions);
+						// console.log(game.questions);
 					    
 					});
 					
