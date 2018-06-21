@@ -34,6 +34,7 @@ How it works:
 			// access with game.options
 			game.optionsDefault = {				
 				playerNames: 		[ "Alvaroa", "Peddro" ], // send the real array of names when creating the game
+				game_online: 		false,
 				board_svg_file:  	'boardtrivial-board.svg',
 				num_casillas: 		10,
 				questions_file: 	'questions.json',
@@ -73,6 +74,9 @@ How it works:
 				
 				// Merging options with defaults
 				game.options = jQuery.extend(game.optionsDefault, options);
+				
+				// cleanup, now we'll load the svg and init everything
+				game.jElement.html('');
 
 				// Load the Board SVG image, in HTML
 				$('<div></div>').addClass('board-svg-container').load(game.options.board_svg_file, function() { 
@@ -84,14 +88,15 @@ How it works:
 					// Init the DICE
 					game.dice 	= new Dice().init();
 					
-					// Init every PLAYER. for eaveryplayer  we create tje Object Player and save it in the array game.players					
+					// Init every PLAYER. for eaveryplayer  we create tje Object Player and save it. Then we'll access with "game.players[numberplayer - 1]"
 					jQuery.each( game.options.playerNames, function(index, playerName) { 						
 						
 						game.players[index] 	= new Player(index + 1).init( playerName );
 						
 					} );
 
-					// init casillas. The information is in the html as attributes
+					// init casillas. The information is in the html as attributes set by hand: 
+					// 	data-casilla (1..num_casillas), data-tema (1..5), data-queso (true/null)
 					for ( var cas = 1; cas <= game.options.num_casillas; cas++ ) {
 						var jCasilla = game.jBoard.find('#casilla_'+cas);
 						jCasilla.attr('data-casilla', cas);
@@ -113,7 +118,7 @@ How it works:
 
 					// init the logic. 
 
-					// 		Init the questions array from file
+					// questions.json:	Init the questions array from file
 					$.getJSON( game.options.questions_file, function( data ) {
 						
 						game.questions = data;
@@ -162,6 +167,7 @@ How it works:
 				console.log( game.players[game.current_player - 1].casilla + ' +- '+game.dice.number+' : ' +posible_casilla_up + ';;' + posible_casilla_down );
 
 				//  mark up the possible casillas
+				if (posible_casilla_up == posible_casilla_down) posible_casilla_down = 'dont-select-anything';
 				posible_casilla_up 		= game.jBoard.find( '#casilla_'+posible_casilla_up );
 				posible_casilla_down 	= game.jBoard.find( '#casilla_'+posible_casilla_down );
 
@@ -209,8 +215,10 @@ How it works:
 				var setOfQuestions 	= game.questions[typeOfQuestion];
 				
 				if (!setOfQuestions.length) { 
-					alert('No hay más preguntas que hacer');
-					// to do. handle this !
+					alert('Se han agotado todas las preguntas de esta seccion. A partir de ahora se repetiran');
+					// in this array we poured all questions, now we move them back
+					game.questions[typeOfQuestion] = setOfQuestions = game.questions[ typeOfQuestion+"_already_asked" ]; 
+					game.questions[ typeOfQuestion+"_already_asked" ] = [];					
 				}
 
 				var question_index = Math.floor( ( Math.random() * setOfQuestions.length ) ); // To do: avoid repeating questions

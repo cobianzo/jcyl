@@ -33,6 +33,23 @@ Las siguientes instrucciones de la estructura de datos se basan en que el jeugo 
 
 
 
+SISTEMA DE PANTALLAS - como cargar diferentes pantallas en el mismo <div>, sin recargar la pag
+================================================================================
+
+> frame.html 
+
+  es el padre de todo.
+  irá cargando las pantallas en el folder
+
+  > /templates/1-modo-de-juego.html
+  > /templates/2-welcome.html
+     ...
+
+  Tiene un sistema de variables para mantener track de las pantallas, y unas funciones para pasar de una a otra que se usan dentro de las templates
+  var screen_vars = {  
+    variables para pasar de pantalla
+  }
+
 
 
 EL JUEGO: VISTA GENERAL A LA ESTRUCTURA DE DATOS

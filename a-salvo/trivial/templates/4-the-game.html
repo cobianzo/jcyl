@@ -1,0 +1,47 @@
+<style>
+	#playground {
+		background: #336795;
+	}
+	.screen-4 #board {
+		/*background: green;*/
+		max-width: 		100%;
+	}
+</style>
+<div class="screen-4 row h-100">
+	
+	<div class='col-12 col-md-4 h-100'>
+	
+		<a href="#">
+		
+		<img src="img/titulo-top-left.png" alt="Prevención de riesgos laborales" class="img-fluid">
+		
+		</a>
+		
+	</div>
+
+
+	<div class="game-container col-12 col-md-8 h-100">
+	</div>
+	
+	<script>
+
+		var theGame;
+		$( document ).ready(function() {
+
+			if (typeof trivialGame == 'undefined') $.loadScript(screen_vars.parent_folder+'js/trivial-js/trivial-pursuit.js', function(){
+
+				alert('trivial has been loaded');		
+
+				// falta hacerlo online
+				theGame = $( '.game-container' ).trivialGame({
+					playerNames: 	 	saved_params.playerNames.length? saved_params.playerNames : ['player 1', 'player 2'],
+					board_svg_file:    	screen_vars.parent_folder+'js/trivial-js/boardtrivial-board.svg',
+					questions_file:    	screen_vars.parent_folder+'js/trivial-js/questions.json'
+				});
+				console.log(theGame);
+    
+    		});
+  		});
+	</script>
+
+</div>

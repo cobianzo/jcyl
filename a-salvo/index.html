@@ -9,18 +9,18 @@
     <title>Trivial DEMO - Bootstrap based</title>
 
     <!-- Bootstrap core CSS -->
-    <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="trivial/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
 
     <!-- Custom fonts for this template -->
 <!--     <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,200i,300,300i,400,400i,600,600i,700,700i,900,900i" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Merriweather:300,300i,400,400i,700,700i,900,900i" rel="stylesheet">
-    <link href="vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+    <link href="trivial/vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet">
  -->
     <!-- Custom styles for this template -->
 <!--     <link href="css/page.css" rel="stylesheet">
  -->
     <!-- Custom styles for this template -->
-    <link href="js/trivial-js/trivial-pursuit.css" rel="stylesheet">
+    <link href="trivial/js/trivial-js/trivial-pursuit.css" rel="stylesheet">
 
   </head>
 
@@ -46,19 +46,19 @@
 
 
     <!-- Bootstrap core JavaScript -->
-    <script src="vendor/jquery/jquery.min.js"></script>
-    <script src="vendor/bootstrap/js/bootstrap.min.js"></script>
+    <script src="trivial/vendor/jquery/jquery.min.js"></script>
+    <script src="trivial/vendor/bootstrap/js/bootstrap.min.js"></script>
 
     <!-- Plugin JavaScript -->
-    <script src="js/trivial-js/trivial-pursuit.js"></script>
+    <script src="trivial/js/trivial-js/trivial-pursuit.js"></script>
     <script>
       var theGame;
       $( document ).ready(function() {
           
           theGame = $( '#playground' ).trivialGame({
              playerNames: [ 'Alvaro', 'Pedro' ],
-             board_svg_file:    './js/trivial-js/boardtrivial-board.svg',
-             questions_file:    './js/trivial-js/questions.json',
+             board_svg_file:    './trivial/js/trivial-js/boardtrivial-board.svg',
+             questions_file:    './trivial/js/trivial-js/questions.json',
           });
           console.log(theGame);
       });
@@ -71,7 +71,7 @@
     <script>
       $( document ).ready(function() {
 
-        $('#playground').load('trivial-frame.html');
+        $('#playground').load('trivial/trivial-frame.html');
 
       });
 
