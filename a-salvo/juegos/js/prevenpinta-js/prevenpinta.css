@@ -29,6 +29,11 @@
 
 
 /*dice, el dado */
+#dice {
+	
+}
+#dice {}
+#dice g { fill: black; }
 @keyframes border-highlight {  
 	0% 		{ stroke: white; } 
 	90% 	{ opacity: black; } 
@@ -39,6 +44,15 @@
 	fill: 		white;	
 	stroke-width: 	2px;
 }
+@keyframes rotating {
+  from { transform: rotate(0deg);  }
+  to { transform: rotate(360deg);  }
+}
+.rotating {
+  animation: rotating 0.1s linear infinite;
+}
+
+
 
 
 /*players*/

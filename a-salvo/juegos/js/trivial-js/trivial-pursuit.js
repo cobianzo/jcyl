@@ -161,8 +161,8 @@ How it works:
 				console.log( 'resultado dado ' + game.dice.number );
 
 				// 2) Marcaje de las casillas posibles. 
-				var posible_casilla_up  	= game.players[game.current_player - 1].casilla + game.dice.number;
-				var posible_casilla_down 	= game.players[game.current_player - 1].casilla - game.dice.number;
+				var posible_casilla_up  	= parseInt(game.players[game.current_player - 1].casilla) + parseInt(game.dice.number);
+				var posible_casilla_down 	= parseInt(game.players[game.current_player - 1].casilla) - parseInt(game.dice.number);
 				if (posible_casilla_up > game.options.num_casillas) 	posible_casilla_up 		= posible_casilla_up - game.options.num_casillas;
 				if (posible_casilla_down < 1) 	posible_casilla_down 	= posible_casilla_down + game.options.num_casillas;
 				console.log( game.players[game.current_player - 1].casilla + ' +- '+game.dice.number+' : ' +posible_casilla_up + ';;' + posible_casilla_down );

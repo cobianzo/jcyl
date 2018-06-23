@@ -56,7 +56,7 @@ How it works:
 			// related also to the quesitos. Every quesito correspond to a type, and takes the colour of the type
 			game.countdown_interval = null
 			game.typeQuestions 		= {
-				type_1: 	{ name: 'colores', color: 'blue' } ,
+				type_1: 	{ name: 'colores', color: 'red' } ,
 				type_2: 	{ name: 'animales', color: 'green' } ,
 				type_3: 	{ name: 'deportes', color: 'yellow' } ,
 				type_4: 	{ name: 'historia', color: 'blue' } ,
@@ -104,7 +104,11 @@ How it works:
 						if (cas == 1 || cas == 9 || cas == 17 || cas == 25 || cas == 33 ) 	jCasilla.attr('data-tema', 2);  // green
 						if (cas == 3 || cas == 11 || cas == 19 || cas == 27 ) 				jCasilla.attr('data-tema', 3);  // yellow
 						if (cas == 7 || cas == 15 || cas == 23 || cas == 31 ) 				jCasilla.attr('data-tema', 4);  // blue
-						if (cas == 5 || cas == 13 || cas == 21 || cas == 29 ) 				jCasilla.attr('data-tema', 5);  // cyan												
+						if (cas == 5 || cas == 13 || cas == 21 || cas == 29 ) 				jCasilla.attr('data-tema', 5);  // cyan
+
+						
+						var color = game.typeQuestions[ 'type_' + jCasilla.attr('data-tema') ].color;
+						jCasilla.css('fill', color);	
 					};
 
 
@@ -167,22 +171,27 @@ How it works:
 				
 				// 4) onclick casilla: interaction with the possible square
 				posible_casilla_up 		= game.jBoard.find( '#casilla_'+posible_casilla_up );
-				posible_casilla_up.bind( 'click',
-					function(e) {
-						
-						// when clicking we move the current player						
-						game.players[game.current_player - 1].fn_movePlayer( $(this).attr('data-casilla') );
+				setTimeout( function() {
+				// we give time to finish rolling the dice
+					
+					posible_casilla_up.bind( 'click',
+						function(e) {
+							
+							// when clicking we move the current player						
+							game.players[game.current_player - 1].fn_movePlayer( $(this).attr('data-casilla') );
 
-						// remove events and class from any casilla
-						game.jBoard.find('.casilla_animada').attr('class', 'transparent-and-border').unbind('click');
+							// remove events and class from any casilla							
+							game.jBoard.find('.casilla_animada').removeClass('casilla_animada').addClass('transparent-and-border').unbind('click');							
 
-						// ask the question to the game.current_player
-						setTimeout(function(){ 
-							game.fn_askQuestion();
-						}, 2000);
-						
-					}
-				).attr('class', 'casilla_animada');
+							// ask the question to the game.current_player. We give time to move the player
+							setTimeout(function(){ 
+								game.fn_askQuestion();
+							}, 2000);
+							
+						}
+					).attr('class', 'casilla_animada');
+
+				}, 2000);
 				
 
 				
@@ -317,7 +326,7 @@ How it works:
 					if (is_right) {
 						// update dice with blink effect
 						game.dice.allowRoll = true;
-						game.dice.jElement.find("#dice-bg").attr('class','casilla_animada orange-bg');
+						game.dice.highlightDice( game.dice.allowRoll );
 					}
 					else
 						game.fn_giveTurnToNextPlayer();	 	// this reactivates the Dice and updates everything visually for the next player
@@ -355,7 +364,7 @@ How it works:
 
 				// update dice with blink effect
 				game.dice.allowRoll = true;
-				game.dice.highlightDice(true);
+				game.dice.highlightDice( game.dice.allowRoll );
 				
 
 			}
@@ -391,8 +400,7 @@ How it works:
 
 						gameDice.allowRoll 	= false;
 
-						//init visual 
-						gameDice.highlightDice(false);						
+						//init visual 						
 
 						game.fn_turn(); 
 						
@@ -410,8 +418,11 @@ How it works:
 				// simulates the animation of the dice rolling with random numbers. game.dice.number gives the value del dado en la tirada
 				this.fn_rollDice = function() {
 
+					// logic: we set the value of the dice beforehand, and later el paripe de la animacion
 					gameDice.number = Math.floor( ( Math.random() * 6 ) + 1 );
 					
+					// visual
+					gameDice.jElement.addClass('rotating');
 					var max_iterations = 10; 					
 					for ( var j = iteration = 0; j < max_iterations; j++ ) {
 
@@ -419,10 +430,14 @@ How it works:
 						setTimeout( function () { 
 							
 							iteration++;
-							gameDice.jElement.find(' > g').hide().filter('#dice-'+Math.floor( ( Math.random() * 6 ) + 1 )).show();
+							gameDice.jElement.find(' > g').hide().filter('g#dice-'+Math.floor( ( Math.random() * 6 ) + 1 )).show();
 
 							if (iteration == max_iterations)  // in the last iteration
-								gameDice.jElement.find(' > g').hide().filter('#dice-'+gameDice.number).show();
+								{ 
+									gameDice.jElement.find(' > g').hide().filter('g#dice-'+gameDice.number).show();									
+									gameDice.highlightDice( gameDice.allowRoll );
+									gameDice.jElement.removeClass('rotating');
+								}
 
 						}, j*100 );
 
