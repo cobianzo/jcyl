@@ -1,0 +1,105 @@
+<style>
+	.screen-3 #playgorund {
+		background: #336795;
+	}
+	.screen-3 button {
+	}
+
+</style>
+<div class="screen-3 row h-100">
+	
+	<div class='col-12 col-md-4 h-100'>
+		<a href="#">
+			
+			<img src="img/titulo-top-left.png" alt="Prevención de riesgos laborales" class="img-fluid">
+			
+  		</a>
+	</div>
+
+	<div class='col-12 col-md-8 h-100'>
+
+		<label for="number-of-players-1">
+			<input type="radio" id="number-of-players-1" name="number-of-players" value="1">
+			1 jugador
+		</label>
+
+		<label for="number-of-players-2">
+			<input type="radio" id="number-of-players-2" name="number-of-players" value="2">
+			2 jugadores
+		</label>
+
+		<label for="number-of-players-3">
+			<input type="radio" id="number-of-players-3" name="number-of-players" value="3">
+			3 jugadores
+		</label>
+		
+		<hr>
+
+		<div class="name-players">
+			<input type="text" id="name-player-1" data-playernum='1' name="name-player-1" value="" placeholder="nombre jug 1">
+			<input type="text" id="name-player-2" data-playernum='2' name="name-player-2" value="" placeholder="nombre jug 2">
+			<input type="text" id="name-player-3" data-playernum='3' name="name-player-3" value="" placeholder="nombre jug 3">
+		</div>
+
+		<div class="game-level">
+			<label for="level-1">
+				<input type="radio" id="level-1" name="level" value="questions-1.json">
+				Nivel 1
+			</label>
+
+			<label for="level-2">
+				<input type="radio" id="level-2" name="level" value="questions-2.json">
+				Nivel 2
+			</label>
+
+			<label for="level-3">
+				<input type="radio" id="level-3" name="level" value="questions-3.json">
+				Nivel 3
+			</label>
+		</div>
+
+		<button id="btn-juega" class="btn-btn-secondary">
+			<!-- see below what happens on onclick: loads de trivial game -->
+			Juega!
+		</button>
+
+	</div>
+
+<!-- Plugin JavaScript -->
+    
+
+	<script>
+
+		$( document ).ready(function() {
+
+    		$('.screen-3 input[name="number-of-players"]').change(function(e){
+    			saved_params.number_of_players = $('.screen-3 input[name="number-of-players"]:checked').val();
+    		});
+
+    		/*$('.screen-3 .name-players input').keyup(function(e){
+    			
+    			var player_num 	= $(this).attr('data-playernum');
+    			var player_name = $(this).val();
+    			console.log('change to: '+player_name);
+
+    			saved_params.playerNames[ player_num - 1 ] = player_name;
+
+    		});*/
+
+			$('.screen-3 input[name="level"]').change(function(e){
+    			saved_params.questions_filename = $('.screen-3 input[name="level"]:checked').val();
+    		});
+
+    		$('#btn-juega').click(function(e){
+
+    			// init the playernames that will be used in the next screeen, (4), when loading the game
+    			for ( m = 1 ; m <= saved_params.number_of_players; m++ ){
+    				saved_params.playerNames[ m - 1 ] = $('.screen-3 .name-players input#name-player-'+m).val();
+    			}
+
+    			moveToNextScreen();
+    		});
+  		});
+	</script>
+
+</div>

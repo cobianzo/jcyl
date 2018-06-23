@@ -1,3 +1,12 @@
+<!-- Load the css. We do it with jquery so we can use a variable for the parent folder -->
+<script>$("<link/>", {
+   rel: "stylesheet",
+   type: "text/css",
+   href: screen_vars.parent_folder+"js/trivial-js/trivial-pursuit.css"
+}).appendTo("head");
+</script>
+
+<!-- some extra css about the things aoutside the game -->
 <style>
 	#playground {
 		background: #336795;
@@ -7,6 +16,8 @@
 		max-width: 		100%;
 	}
 </style>
+
+
 <div class="screen-4 row h-100">
 	
 	<div class='col-12 col-md-4 h-100'>

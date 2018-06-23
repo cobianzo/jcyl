@@ -28,6 +28,19 @@
 .orange-bg { fill: orange; }
 
 
+/*dice, el dado */
+@keyframes border-highlight {  
+	0% 		{ stroke: white; } 
+	90% 	{ opacity: black; } 
+	100% 	{ opacity: white; } 
+}
+.highlighted {
+	animation: 	border-highlight 1.5s infinite;
+	fill: 		white;	
+	stroke-width: 	2px;
+}
+
+
 /*players*/
 #current-player-info #current-player-panel {
 	opacity: 	0.8;

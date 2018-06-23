@@ -6,7 +6,7 @@ Dependencies:
 How it works:
 	Declare a container in html, ie <div id='playground'></div> 
 	+
-	var theGame = $( '#playground' ).trivialGame({
+	var theGame = $( '#playground' ).prevenpintaGame({
 		       playerNames: [ 'Alvaro', 'Pedro' ]
 		    });
 */
@@ -16,16 +16,16 @@ How it works:
 (function ( $ ) {
 	
 		// this is the first call of the plugin, it wil call the init of the game 
-	    $.fn.trivialGame = function( options ) {
+	    $.fn.prevenpintaGame = function( options ) {
 						
-			var instance = (new trivialGame( jQuery(this) )).init(options);
+			var instance = (new prevenpintaGame( jQuery(this) )).init(options);
 			return instance;
 		}
 
 
 
 		"use strict";
-		var trivialGame = function(jEl) {
+		var prevenpintaGame = function(jEl) {
 
 			var game = this;   	// This will allow to access to all elements, fns and propierties.   ie. game.Dice().rollDice();
 			
@@ -35,8 +35,8 @@ How it works:
 			game.optionsDefault = {				
 				playerNames: 		[ "Alvaroa", "Peddro" ], // send the real array of names when creating the game
 				game_online: 		false,
-				board_svg_file:  	'boardtrivial-board.svg',
-				num_casillas: 		10,
+				board_svg_file:  	'prevenpinta-board.svg',
+				num_casillas: 		34,  					// la casilla de salida seria la #casilla_0, la ultima es #casilla_34
 				questions_file: 	'questions-2.json',
 				time_per_question: 	5 // in secs				
 			};
@@ -100,14 +100,11 @@ How it works:
 					for ( var cas = 1; cas <= game.options.num_casillas; cas++ ) {
 						var jCasilla = game.jBoard.find('#casilla_'+cas);
 						jCasilla.attr('data-casilla', cas);
-						if (cas == 1 || cas == 6 ) 	jCasilla.attr('data-tema', 1);	// tema 1 is the red one
-						if (cas == 2 || cas == 7 ) 	jCasilla.attr('data-tema', 2);  // green
-						if (cas == 3 || cas == 8 ) 	jCasilla.attr('data-tema', 3);  // yellow
-						if (cas == 4 || cas == 9 ) 	jCasilla.attr('data-tema', 4);  // blue
-						if (cas == 5 || cas == 10 )	jCasilla.attr('data-tema', 5);  // cyan
-
-						if ( (cas == 1) || (cas == 7) || (cas == 5) || (cas == 3) || (cas == 9) )
-							jCasilla.attr('data-queso', true);
+						if ((cas % 2 ) == 0 )												jCasilla.attr('data-tema', 1);	// tema 1 is the red one
+						if (cas == 1 || cas == 9 || cas == 17 || cas == 25 || cas == 33 ) 	jCasilla.attr('data-tema', 2);  // green
+						if (cas == 3 || cas == 11 || cas == 19 || cas == 27 ) 				jCasilla.attr('data-tema', 3);  // yellow
+						if (cas == 7 || cas == 15 || cas == 23 || cas == 31 ) 				jCasilla.attr('data-tema', 4);  // blue
+						if (cas == 5 || cas == 13 || cas == 21 || cas == 29 ) 				jCasilla.attr('data-tema', 5);  // cyan												
 					};
 
 
@@ -161,26 +158,22 @@ How it works:
 				console.log( 'resultado dado ' + game.dice.number );
 
 				// 2) Marcaje de las casillas posibles. 
-				var posible_casilla_up  	= game.players[game.current_player - 1].casilla + game.dice.number;
-				var posible_casilla_down 	= game.players[game.current_player - 1].casilla - game.dice.number;
-				if (posible_casilla_up > game.options.num_casillas) 	posible_casilla_up 		= posible_casilla_up - game.options.num_casillas;
-				if (posible_casilla_down < 1) 	posible_casilla_down 	= posible_casilla_down + game.options.num_casillas;
-				console.log( game.players[game.current_player - 1].casilla + ' +- '+game.dice.number+' : ' +posible_casilla_up + ';;' + posible_casilla_down );
-
-				//  mark up the possible casillas
-				if (posible_casilla_up == posible_casilla_down) posible_casilla_down = 'dont-select-anything';
-				posible_casilla_up 		= game.jBoard.find( '#casilla_'+posible_casilla_up );
-				posible_casilla_down 	= game.jBoard.find( '#casilla_'+posible_casilla_down );
+				var posible_casilla_up  	= parseInt(game.players[game.current_player - 1].casilla) + parseInt(game.dice.number);
+				if (posible_casilla_up > game.options.num_casillas) 	posible_casilla_up 	= parseInt(game.options.num_casillas);
+				console.log( game.players[game.current_player - 1].casilla + ' +- '+game.dice.number+' : ' +posible_casilla_up );
 
 				
+				
+				
 				// 4) onclick casilla: interaction with the possible square
-				$.merge(posible_casilla_up, posible_casilla_down).bind( 'click',
+				posible_casilla_up 		= game.jBoard.find( '#casilla_'+posible_casilla_up );
+				posible_casilla_up.bind( 'click',
 					function(e) {
 						
 						// when clicking we move the current player						
 						game.players[game.current_player - 1].fn_movePlayer( $(this).attr('data-casilla') );
 
-						// remove events and class from qeuares
+						// remove events and class from any casilla
 						game.jBoard.find('.casilla_animada').attr('class', 'transparent-and-border').unbind('click');
 
 						// ask the question to the game.current_player
@@ -353,26 +346,17 @@ How it works:
 				game.jBoard.find('#current-player-info #current-player-panel').css('fill', game.player_colors[game.current_player-1])
 				game.jBoard.find('#current-player-info text:eq(1)').text(game.current_player);
 
-				// update player info panels (position and size)
-				for( var k = 1; k <= game.players.length; k++) {
-					var panel =  game.players[ k - 1 ].jPlayerInfo;
-					if (k == game.current_player) {
-						game.fn_moveElement( panel, game.jBoard.find('#position-markers #position-current'), 1 );
-					}
-					else {					
-						game.fn_moveElement( panel, game.jBoard.find('#position-markers #position-'+k), 0.7 );
-					}
-				}
-
-				// update players icons (size)
+				// update players icons and panel (size)
 				$.each(game.players, function(index, player) {
 					var scale = (player.number == game.current_player )? 1 : 0.6;
 					game.fn_updateOnlyScale(player.jPlayerIcon, scale);
+					game.fn_updateOnlyScale(player.jPlayerInfo, scale);
 				}); 				 
 
 				// update dice with blink effect
 				game.dice.allowRoll = true;
-				game.dice.jElement.find("#dice-bg").attr('class','casilla_animada orange-bg');
+				game.dice.highlightDice(true);
+				
 
 			}
 
@@ -408,16 +392,10 @@ How it works:
 						gameDice.allowRoll 	= false;
 
 						//init visual 
-						game.dice.jElement.find("#dice-bg").attr('class', 'transparent');
+						gameDice.highlightDice(false);						
 
 						game.fn_turn(); 
 						
-						
-						
-
-						//game.players[0].fn_movePlayer(7);
-						//game.players[1].fn_movePlayer(3);
-						// game.fn_moveElement( game.players[0].jElement, jQuery('#casilla_3') );
 
 					});
 
@@ -429,7 +407,7 @@ How it works:
 
 				// Dice functions 
 
-				// simulates the animation of the dice rolling with random numbers
+				// simulates the animation of the dice rolling with random numbers. game.dice.number gives the value del dado en la tirada
 				this.fn_rollDice = function() {
 
 					gameDice.number = Math.floor( ( Math.random() * 6 ) + 1 );
@@ -451,7 +429,10 @@ How it works:
 					}
 				}
 
-
+				// on_off = [true | false]
+				this.highlightDice 	= function(on_off) {  
+					gameDice.jElement.toggleClass('highlighted', on_off);
+				}
 				
 
 			}
@@ -467,23 +448,29 @@ How it works:
 				this.name = 'noname';
 				this.number = i;
 				this.casilla = null;
-				this.jElement = null;
-				this.jPlayerIcon = null;
+				this.jElement = null;		// set in the svg file in Illutrator. .player-i <g#player-icon> </g> <g#player-info> <text> PUNTUACION </text> <text> NAME </text></g>
+				this.jPlayerIcon = null;		
 				this.jPlayerInfo = null;
-				this.jPuntuacion = null;
+				this.jPuntuacion = null;		
+				this.jPlayerName = null;		
+
 
 				// self 	= this;   <<<<< using self  doesnt work inside the fns
 
 				this.init = function(playerGame) {
 
+					// LOGIC: we save the name and set an initial position for this player
 					this.name 	= playerGame;
+					this.casilla 	= 0;
 
+					// VISUAL: assigb all html elements to handle the view of the player.
+					// 			in the SVG there is a generic player already created. We clone that html #player element, once for every player playing
 					var jPlayer = $('#player').clone().show();
 					var color = game.player_colors[this.number - 1];
 					jPlayer.attr( 'class', 'player' ).attr( 'id', 'player-'+this.number ).find('#player-body').css('fill', color);
-					$('#player').hide();
-					//jQuery('<image src="'+game.options.player_src+'"></image>').attr('id', 'player-'+this.number).addClass('player');
+					$('#player').hide(); // we could perfectly delete ir.
 					
+
 					this.jElement 	 = jPlayer;
 					this.jPlayerIcon = jPlayer.find('#player-icon');
 					this.jPlayerInfo = jPlayer.find('#player-info');
@@ -493,28 +480,29 @@ How it works:
 					this.jPlayerInfo.find('#player-panel').css('fill', color);
 					this.jPlayerName.text( this.name );
 
-					// creacion player
+					// creacion visual in html player
 					game.jBoard.append(jPlayer);					
 
-					// set an initial spot and move it
-					this.casilla 	= ( 4 + this.number );
+
+					// update player info panels (position and size)
+					game.fn_moveElement( this.jPlayerInfo, game.jBoard.find('#position-markers #position-'+this.number), 0.7 );
+					
+					
+
+					// move it					
 					this.fn_movePlayer(this.casilla);
+
+
 
 
 					return this;
 				}
 
 				// paints a quesito in the wheel of quesitos. quesito_number = [1..5]. To access to the points use parseInt(player.jPuntuacion.text()) 
-				this.fn_addPoint = function() { 
+				this.fn_addPoint = function(numberOfPoints) { 
 					console.log("add one point to player "+this.number+" ("+this.name+") ");
-					this.jPuntuacion.text( parseInt(this.jPuntuacion.text()) + 1 );
-				}
-				this.fn_addQuesito = function(quesito_number) {  
-					var color_quesito 	= game.typeQuestions['type_'+quesito_number].color;
-					console.log("anadiendo QUESITO "+quesito_number+" ("+color_quesito+") a player "+this.number+" /"); 
-					this.jPlayerInfo.find('#quesito #queso-'+quesito_number).addClass('on').css('fill', color_quesito);
-					return true;
-				}
+					this.jPuntuacion.text( parseInt(this.jPuntuacion.text()) + ( typeof(numberOfPoints) === 'undefined' ) );
+				}				
 
 				// movs the plaver. usign the fn moveElement
 				this.fn_movePlayer = function(casilla_number) {
@@ -559,7 +547,7 @@ How it works:
 
 		// for an element like <g transform="translate(43 234) scale(0.5 0.5)">   replace only the scale leaving the translate the same
 		this.fn_updateOnlyScale = function(jElement, scaleValue) {
-
+			console.log('update scale of '+jElement.attr('id')+' to '+scaleValue);
 			var regex = /scale\(.+?\)/i ;  // matches anything like  "scale(2.3 2)"
 			var transformAttr = jElement.attr('transform');
 			var match = regex.exec(transformAttr);  // now match[0] should be "scale(2.3 2)"

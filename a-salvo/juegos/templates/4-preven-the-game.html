@@ -1,0 +1,90 @@
+<!-- This template loads the game.
+How to be called: 
+	$('#the-container').load( path-and-name-of-this-file.html , function() { });
+Requirements to work properly:
+	jQuery
+	Bootstrap 4 (css and js)
+
+	variables with the right values for
+		var screen_vars 	= {  parent_folder: ''  };
+		var saved_params 	= {   playerNames: ['player 1', 'player 2'],   questions_filename: 'questions-1.json' };
+ -->
+
+
+
+<script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+
+
+
+<style>
+	#playground {
+		background: #336795;
+	}
+	.screen-4 #board {
+		/*background: green;*/
+		max-width: 		100%;
+	}
+</style>
+<div class="screen-4 row h-100">
+	
+	<div class='col-12 col-md-4 h-100'>
+	
+		<a href="#">
+		
+		<img src="img/titulo-top-left.png" alt="Prevención de riesgos laborales" class="img-fluid">
+		
+		</a>
+		
+	</div>
+
+
+	<div class="game-container col-12 col-md-8 h-100">
+	</div>
+	
+	<script>
+		
+		// if (typeof '$' == 'undefined') alert('jquery no va');
+		var theGame;
+		$( document ).ready(function() {
+
+
+			// these vars should be initialized by the parent template, but just in case we initialize if they arent
+			if (typeof screen_vars == 'undefined') 
+				var screen_vars = {  parent_folder: '../'  };
+			if (typeof saved_params == 'undefined') 
+				var saved_params = {   playerNames: ['player 1', 'player 2'],   questions_filename: 'questions-1.json' };
+			
+
+
+			// Dependencies: CSS and JS			
+			// jquery. 
+   			
+
+			// bootstrap 4, js and css
+   			if (typeof bootstrap == 'undefined') $.getScript(screen_vars.parent_folder+'vendor/bootstrap/js/bootstrap.min.js');
+   			$("<link/>", { rel: "stylesheet", type: "text/css", href: screen_vars.parent_folder+"vendor/bootstrap/css/bootstrap.min.css"
+			}).appendTo(".screen-4");
+
+			// Css for the game
+			$("<link/>", { rel: "stylesheet", type: "text/css", href: screen_vars.parent_folder+"js/prevenpinta-js/prevenpinta.css"
+			}).appendTo(".screen-4");
+
+
+
+			if (typeof prevenpintaGame == 'undefined') $.getScript(screen_vars.parent_folder+'js/prevenpinta-js/prevenpinta.js').done(function( script, textStatus ){
+
+				// falta hacerlo online				
+				alert('trivial has been loaded, file '+saved_params.questions_filename);		
+				
+				theGame = $( '.game-container' ).prevenpintaGame({
+					playerNames: 	 	saved_params.playerNames,
+					board_svg_file:    	screen_vars.parent_folder+'js/prevenpinta-js/prevenpinta-board.svg',
+					questions_file:     screen_vars.parent_folder+'js/prevenpinta-js/'+saved_params.questions_filename
+				});
+				console.log(theGame);
+    
+    		}).fail(function( jqxhr, settings, exception ) { alert('failing loading game'); });
+  		});
+	</script>
+
+</div>
