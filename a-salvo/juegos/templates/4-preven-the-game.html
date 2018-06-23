@@ -40,7 +40,7 @@ Requirements to work properly:
 
 	<div class="game-container col-12 col-md-8 h-100">
 	</div>
-	
+	<div id='test' class='container'></div>
 	<script>
 		
 		// if (typeof '$' == 'undefined') alert('jquery no va');
@@ -78,12 +78,29 @@ Requirements to work properly:
 				
 				theGame = $( '.game-container' ).prevenpintaGame({
 					playerNames: 	 	saved_params.playerNames,
-					board_svg_file:    	screen_vars.parent_folder+'js/prevenpinta-js/prevenpinta-board.svg',
+					plugin_folder: 		screen_vars.parent_folder+'js/prevenpinta-js/',					
 					questions_file:     screen_vars.parent_folder+'js/prevenpinta-js/'+saved_params.questions_filename
 				});
 				console.log(theGame);
+
+
+
+				// TEST THIGNS
+				$('#test').uncoverImagePlugin({
+					img_src: 	screen_vars.parent_folder+'js/prevenpinta-js/img-test.png',
+					square_src: screen_vars.parent_folder+'js/prevenpinta-js/square.png'
+				});
+
     
     		}).fail(function( jqxhr, settings, exception ) { alert('failing loading game'); });
+
+
+
+
+
+
+
+
   		});
 	</script>
 

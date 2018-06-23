@@ -20,6 +20,7 @@ How it works:
 						
 			var instance = (new prevenpintaGame( jQuery(this) )).init(options);
 			return instance;
+
 		}
 
 
@@ -35,10 +36,11 @@ How it works:
 			game.optionsDefault = {				
 				playerNames: 		[ "Alvaroa", "Peddro" ], // send the real array of names when creating the game
 				game_online: 		false,
-				board_svg_file:  	'prevenpinta-board.svg',
+				plugin_folder: 		'', 					 // set it on the call of the plugin. include the '/' in the end
+				board_svg_filename:	'prevenpinta-board.svg', // normally this i s not changed
 				num_casillas: 		34,  					// la casilla de salida seria la #casilla_0, la ultima es #casilla_34
-				questions_file: 	'questions-2.json',
-				time_per_question: 	5 // in secs				
+				questions_file: 	'questions-2.json', 	// overwritten with full path to the file
+				time_per_question: 	15 // in secs				
 			};
 
 			// Access to HTML objects
@@ -79,7 +81,7 @@ How it works:
 				game.jElement.html('');
 
 				// Load the Board SVG image, in HTML
-				$('<div></div>').addClass('board-svg-container').load(game.options.board_svg_file, function() { 
+				$('<div></div>').addClass('board-svg-container').load(game.options.plugin_folder+game.options.board_svg_filename, function() { 
 
 					game.jElement.css('height', '80vh');
 					// Init this var
@@ -191,7 +193,7 @@ How it works:
 						}
 					).attr('class', 'casilla_animada');
 
-				}, 2000);
+				}, 1500);
 				
 
 				
@@ -237,16 +239,20 @@ How it works:
 				game.questions[typeOfQuestion] = updatedSetOfQuestions;
 
 				// creating the question container, this modal structure depend on bootstrap 4 modal css and  modal js
-				game.jQuestionContainer.append('<div class="question-modal modal hide fade modal-sm mx-auto" data-keyboard="false" data-backdrop="static" tabindex="-1" role="dialog" aria-hidden="true"> \
+				game.jQuestionContainer.append('<div class="question-modal modal hide fade modal-lg mx-auto" data-keyboard="false" data-backdrop="static" tabindex="-1" role="dialog" aria-hidden="true"> \
 					<div class="modal-dialog modal-dialog-centered"> <div class="modal-content">\
 					<div class="modal-header"></div>\
-					<div class="modal-body"><ul></ul></div>\
+					<div class="modal-body row"><ul class="col-6"></ul><div class="col-6 pinta-micro-game"></div></div>\
 					<div class="modal-footer"><div class="countdown w-50"></div><div class="tema w-50"></div></div>\
 					</div></div></div>'); // close content dialog and modal
 		
 				game.jQuestionContainer.find('.modal-header').text(theQuestion.question);
 				game.jQuestionContainer.find('.tema').text(game.typeQuestions[typeOfQuestion].name);
 				game.jQuestionContainer.find('.countdown').text(game.options.time_per_question);
+				game.jQuestionContainer.find('.pinta-micro-game').uncoverImagePlugin({
+					img_src: 	game.options.plugin_folder+'img-test.png',
+					square_src: game.options.plugin_folder+'square.png'
+				});
 
 				// Creation of the countrdown and behaviour
 				var timeleft = 10;
@@ -297,7 +303,7 @@ How it works:
 				if (is_right) {
 					
 					// we add one point in any case
-					game.players[game.current_player - 1].fn_addPoint();
+					game.players[game.current_player - 1].fn_addPoints();
 
 					// process el quesito if la casilla es de quesito, y los puntos, y numero de tirada
 					var jCurrentCasilla = game.jBoard.find("#casilla_"+game.players[game.current_player - 1].casilla);
@@ -325,8 +331,8 @@ How it works:
 					// Logic changes Give turn to next player if answer was not ok. If not, we reactivate the Dice here
 					if (is_right) {
 						// update dice with blink effect
-						game.dice.allowRoll = true;
-						game.dice.highlightDice( game.dice.allowRoll );
+						game.dice.jElement.addClass('allow-roll');
+						// game.dice.highlightDice( game.dice.allowRoll );
 					}
 					else
 						game.fn_giveTurnToNextPlayer();	 	// this reactivates the Dice and updates everything visually for the next player
@@ -363,8 +369,8 @@ How it works:
 				}); 				 
 
 				// update dice with blink effect
-				game.dice.allowRoll = true;
-				game.dice.highlightDice( game.dice.allowRoll );
+				game.dice.jElement.addClass('allow-roll');
+				// game.dice.highlightDice( game.dice.allowRoll );
 				
 
 			}
@@ -379,7 +385,7 @@ How it works:
 				
 				// Dice Propierties 
 				this.jElement 	= game.jBoard.find('#dice');   // jQuery('<div></div>').addClass('dice-container').text('Tira el dado');
-				this.allowRoll 	= true;		// - set to false to avoid that clicking on the roll triggers it
+				// this.allowRoll 	= true;		// - now we use the class allow-roll
 				this.number 	= 0;
 				
 				var gameDice = this;
@@ -391,17 +397,17 @@ How it works:
 
 					// Events for the Dice. 1) click on the dice
 					gameDice.jElement.on('click', function(e){ 
-					
-						// init logic
-						if ( !gameDice.allowRoll )	{
+
+				
+						// no effect if it's not the moment to roll the dice
+						if ( ( ! gameDice.jElement.hasClass('allow-roll') ) )	{
 							alert( 'no lances ahora');
 							return;
 						}
 
-						gameDice.allowRoll 	= false;
+						gameDice.jElement.removeClass('allow-roll'); 
 
 						//init visual 						
-
 						game.fn_turn(); 
 						
 
@@ -435,7 +441,7 @@ How it works:
 							if (iteration == max_iterations)  // in the last iteration
 								{ 
 									gameDice.jElement.find(' > g').hide().filter('g#dice-'+gameDice.number).show();									
-									gameDice.highlightDice( gameDice.allowRoll );
+									// gameDice.highlightDice( gameDice.allowRoll );
 									gameDice.jElement.removeClass('rotating');
 								}
 
@@ -514,9 +520,12 @@ How it works:
 				}
 
 				// paints a quesito in the wheel of quesitos. quesito_number = [1..5]. To access to the points use parseInt(player.jPuntuacion.text()) 
-				this.fn_addPoint = function(numberOfPoints) { 
-					console.log("add one point to player "+this.number+" ("+this.name+") ");
-					this.jPuntuacion.text( parseInt(this.jPuntuacion.text()) + ( typeof(numberOfPoints) === 'undefined' ) );
+				this.fn_addPoints = function() { 
+					console.log("add points to player "+this.number+" ("+this.name+") ");
+					var points = 10;
+					var uncovered = parseInt($('.pinta-micro-game').attr('data-uncovered'));
+					points 	= Math.max (1, points - uncovered);
+					this.jPuntuacion.text( parseInt(this.jPuntuacion.text()) + points );
 				}				
 
 				// movs the plaver. usign the fn moveElement
@@ -579,3 +588,79 @@ How it works:
 	}
  
 }( jQuery ));
+
+
+
+
+
+
+
+(function ( $ ) {
+	
+		// this is the first call of the plugin, it wil call the init of the game 
+	    $.fn.uncoverImagePlugin = function( options ) {
+						
+			var instance = (new uncoverImagePlugin( jQuery(this) )).init(options);
+			return instance;
+			
+		}
+
+
+		"use strict";
+		var uncoverImagePlugin = function(jEl) {
+
+			var pintaGame = this;   	// This will allow to access to all elements, fns and propierties. 
+			
+			// Setting all the options. Access with pintaGame.options
+			pintaGame.optionsDefault = {								
+				img_src: 		'./img-test.png',
+				square_src: 	'./square.png'
+			};
+
+			
+			// access to the inner modules, one of them iterated
+			pintaGame.jElement 	= jEl;
+			
+
+	/*************************************************************************
+	************  // THE UNCOVER IMAGE ELEMENT:  Init Game in the container jEl
+	*************************************************************************/
+
+			pintaGame.init = function( options ) {
+				
+				// Merging options with defaults
+				pintaGame.options = jQuery.extend(pintaGame.optionsDefault, options);
+				
+				// Visual: we create the game with jquery, using the img given in the options
+				var container = $('<div class="container p-0 position-absolute"></div>').addClass('container');
+				for (var row = 0; row < 5; row++) {
+
+					var thisrow = $("<div class='row no-gutters'></div>");
+
+					for (var column = 0; column < 4; column++) {
+						var thiscolumn = $("<div class='col-3 covered'></div>");
+						thiscolumn.append('<img src="'+pintaGame.options.square_src+'" class="w-100">');
+						thisrow.append(thiscolumn);
+					}
+
+					container.append(thisrow);
+				}
+
+				container.find('.covered').bind('click', function(e){
+					$(this).removeClass('covered').addClass('uncovered');
+					pintaGame.jElement.attr('data-uncovered', pintaGame.jElement.find('.uncovered').length );
+				});
+
+				var totalSquares = pintaGame.jElement.find('.convered, .uncovered').length;
+				pintaGame.jElement.addClass('uncover-image-wrapper p-0').attr('data-uncovered', '0').attr('data-totalsquares', totalSquares).append(container);
+				pintaGame.jElement.append('<img src="'+pintaGame.options.img_src+'" class="w-100">');
+
+
+
+				return pintaGame;
+			}
+
+	}
+ 
+}( jQuery ));
+

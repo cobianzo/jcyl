@@ -39,7 +39,7 @@
 	90% 	{ opacity: black; } 
 	100% 	{ opacity: white; } 
 }
-.highlighted {
+#dice.allow-roll {
 	animation: 	border-highlight 1.5s infinite;
 	fill: 		white;	
 	stroke-width: 	2px;
@@ -76,3 +76,26 @@
 	stroke-width: 	2px;
 }
 
+
+
+
+
+
+
+
+
+
+/*uncoverImagePlugin*/
+.uncover-image-wrapper {
+
+}
+
+.uncover-image-wrapper .covered {
+	border: 		1px solid gray;
+}
+.uncover-image-wrapper .uncovered {
+	border: 		1px solid transparent;	
+}
+.uncover-image-wrapper .uncovered img {
+	opacity: 	0;
+}
