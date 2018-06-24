@@ -25,9 +25,9 @@
 
 
   var screen_vars = {
-    current_screen:    0,                       // from 1 to n
-    parent_folder:     './juegos/',            // include the '/' in the end!. Si sel llama desde un html q este en otro folder
-    template_folder:   'templates/',     // include the '/' in the end
+    current_screen:    0,                     // from 1 to n
+    parent_folder:     './juegos/',           // include the '/' in the end!. Si sel llama desde un html q este en otro folder
+    template_folder:   'templates/',          // include the '/' in the end
   };
 
   // the values that we go saving along the screens, and we will use to load the game. ()
@@ -38,21 +38,24 @@
   };
 
   var screens   = [
-
     { 
-      template_name:  '1-modo-de-juego.html',
+      template_name:  '1-seleccion-de-juego.html',
       title:          'TriviSalva! Selecciona el modo de juego'      
     },
     { 
-      template_name:  '2-welcome.html',
+      template_name:  '2-modo-de-juego.html',
+      title:          'TriviSalva! Selecciona el modo de juego'      
+    },
+    { 
+      template_name:  '3-trivi-welcome.html',
       title:          'TriviSalva! Bienvenido'
     },
     { 
-      template_name:  '3-select-players.html',  
+      template_name:  '4-select-players.html',  
       title:          'TrviSalva! Selección de jugadores'
     },
     { 
-      template_name:  '4-the-game.html',  
+      template_name:  '5-trivi-the-game.html',  
       title:          'TrviSalva! Demuestra tus conocimientos en Prevención de Riesgos'
     }
 

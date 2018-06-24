@@ -1,0 +1,101 @@
+<!-- 
+
+Esto es sencillamente una template que se carga en un contenedor parcial del index. Puro html5 y algo de js
+con la peculiaridad de que
+acepta las variables js de su padre, trivial-frame.html
+usa la funcion 'moveToNextScreen()' para pasar a la siguiente template, (definido claro en el padre trivial-frame.html)
+y actualiza variables tb definidos trivial-frame, en 'saved_params'
+
+saved_params actualizables en esta screen:
+	game_online
+-->	
+
+<div class="row screen-1">
+
+	<div class='col-12 col-md-4'>
+		<a href="#">
+			
+			<img src="img/titulo-top-left.png" alt="Prevención de riesgos laborales" class="img-fluid">
+			
+  		</a>
+		
+	</div>
+
+	<div class='col-12 col-md-8'>
+		<h3 class='text-center mt-4'>Elige el juego</h3>
+		<div class='row'>
+			<div class='col-12'>
+				
+				<form id="game-selection">
+					<label for="juego-trivi">
+						<input type="radio" id="juego-trivi" name="juego" value="trivi">
+						Trivi Salva
+					</label>
+
+					<label for="juego-preven">
+						<input checked="checked" type="radio" id="juego-preven" name="juego" value="preven">
+						Preven Pinta
+					</label>
+
+					<input class="btn btn-primary" type='submit' value="adelante">
+						
+				</form>
+
+
+			</div>
+		</div>
+	</div>
+
+
+</div>
+
+
+
+<script>
+
+	$( document ).ready(function() {
+
+
+		$('#game-selection').submit(function(e){
+			e.preventDefault();
+
+			var juego = $('#game-selection input[name="juego"]:checked').val();   // trivi   \  preven
+
+			if (juego == 'trivi') {
+				// dont do anything. The deafult screens are set for Prevenpinta
+			}
+			if (juego == 'preven') {
+
+				screens   = [
+							    { 
+							      template_name:  'ya no importa',							      
+							    },
+							    { 
+							      template_name:  '2-modo-de-juego.html',
+							      title:          'Prevenpinta! Selecciona el modo de juego'      
+							    },							    
+							    { 
+							      template_name:  '4-select-players.html',  
+							      title:          'Prevenpinta! Selección de jugadores'
+							    },
+							    { 
+							      template_name:  '5-preven-the-game.html',  
+							      title:          'Prevenpinta! Demuestra tus conocimientos en Prevención de Riesgos'
+							    }
+				];
+
+			}
+
+			console.log(screens);
+
+			moveToNextScreen();
+
+
+
+
+
+
+		});
+	});
+
+</script>

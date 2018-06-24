@@ -10,12 +10,6 @@ Requirements to work properly:
 		var saved_params 	= {   playerNames: ['player 1', 'player 2'],   questions_filename: 'questions-1.json' };
  -->
 
-
-
-<script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
-
-
-
 <style>
 	#playground {
 		background: #336795;
@@ -40,24 +34,25 @@ Requirements to work properly:
 
 	<div class="game-container col-12 col-md-8 h-100">
 	</div>
-	<div id='test' class='container'></div>
+	<div id='test' class='container'> <!-- not in use , to delete --></div>
 	<script>
-		
+		console.log(screen_vars);
+		console.log(saved_params);
 		// if (typeof '$' == 'undefined') alert('jquery no va');
 		var theGame;
+		
+		// these vars should be initialized by the parent template, but just in case we initialize if they arent
+		if (typeof (screen_vars) === 'undefined')  {
+			alert('screen_vars es undefined');
+			var screen_vars = {  parent_folder: '../'  };
+		}
+		if (typeof (saved_params) === 'undefined') 
+			var saved_params = {   playerNames: ['player 1', 'player 2'],   questions_filename: 'questions-1.json' };
+		
 		$( document ).ready(function() {
-
-
-			// these vars should be initialized by the parent template, but just in case we initialize if they arent
-			if (typeof screen_vars == 'undefined') 
-				var screen_vars = {  parent_folder: '../'  };
-			if (typeof saved_params == 'undefined') 
-				var saved_params = {   playerNames: ['player 1', 'player 2'],   questions_filename: 'questions-1.json' };
 			
-
-
 			// Dependencies: CSS and JS			
-			// jquery. 
+			// jquery. And now we load, if it wasnt, bt4 
    			
 
 			// bootstrap 4, js and css
@@ -74,7 +69,7 @@ Requirements to work properly:
 			if (typeof prevenpintaGame == 'undefined') $.getScript(screen_vars.parent_folder+'js/prevenpinta-js/prevenpinta.js').done(function( script, textStatus ){
 
 				// falta hacerlo online				
-				alert('trivial has been loaded, file '+saved_params.questions_filename);		
+				alert('prevenpinta has been loaded, questions file is '+saved_params.questions_filename);		
 				
 				theGame = $( '.game-container' ).prevenpintaGame({
 					playerNames: 	 	saved_params.playerNames,
@@ -85,11 +80,11 @@ Requirements to work properly:
 
 
 
-				// TEST THIGNS
+				/*// TEST THIGNS
 				$('#test').uncoverImagePlugin({
 					img_src: 	screen_vars.parent_folder+'js/prevenpinta-js/img-test.png',
 					square_src: screen_vars.parent_folder+'js/prevenpinta-js/square.png'
-				});
+				});*/
 
     
     		}).fail(function( jqxhr, settings, exception ) { alert('failing loading game'); });
