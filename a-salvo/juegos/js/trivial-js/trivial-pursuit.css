@@ -7,10 +7,6 @@
 .board-svg-container #board {
 	height: 			100%;
 }
-.player #player-icon, .player #player-info {			
-	-webkit-transition: all 2s; /* Safari */
-	transition: 		all 2s;
-}
 
 
 @keyframes up {  
@@ -28,9 +24,40 @@
 .orange-bg { fill: orange; }
 
 
+/*dice, el dado */
+#dice {
+	
+}
+#dice {}
+#dice g { fill: black; }
+@keyframes border-highlight {  
+	0% 		{ stroke: white; } 
+	90% 	{ opacity: black; } 
+	100% 	{ opacity: white; } 
+}
+#dice.allow-roll {
+	animation: 	border-highlight 1.5s infinite;
+	fill: 		white;	
+	stroke-width: 	2px;
+}
+@keyframes rotating {
+  from { transform: rotate(0deg);  }
+  to { transform: rotate(360deg);  }
+}
+.rotating {
+  animation: rotating 0.05s linear infinite;
+}
+
+
+
+
 /*players*/
 #current-player-info #current-player-panel {
 	opacity: 	0.8;
+}
+.player #player-icon, .player #player-info {			
+	-webkit-transition: all 2s; /* Safari */
+	transition: 		all 2s;
 }
 
 
@@ -48,4 +75,3 @@
 	stroke: 	black;
 	stroke-width: 	2px;
 }
-

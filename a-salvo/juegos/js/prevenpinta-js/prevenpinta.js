@@ -385,7 +385,7 @@ How it works:
 				
 				// Dice Propierties 
 				this.jElement 	= game.jBoard.find('#dice');   // jQuery('<div></div>').addClass('dice-container').text('Tira el dado');
-				// this.allowRoll 	= true;		// - now we use the class allow-roll
+				// this.allowRoll 	= true;		// - now we use the class .allow-roll
 				this.number 	= 0;
 				
 				var gameDice = this;
@@ -450,10 +450,10 @@ How it works:
 					}
 				}
 
-				// on_off = [true | false]
-				this.highlightDice 	= function(on_off) {  
+				// on_off = [true | false] not in use anymore, we use the class .allow-roll
+				/*this.highlightDice 	= function(on_off) {  
 					gameDice.jElement.toggleClass('highlighted', on_off);
-				}
+				}*/
 				
 
 			}

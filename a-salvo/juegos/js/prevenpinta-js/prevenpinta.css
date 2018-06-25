@@ -7,10 +7,7 @@
 .board-svg-container #board {
 	height: 			100%;
 }
-.player #player-icon, .player #player-info {			
-	-webkit-transition: all 2s; /* Safari */
-	transition: 		all 2s;
-}
+
 
 
 @keyframes up {  
@@ -59,7 +56,10 @@
 #current-player-info #current-player-panel {
 	opacity: 	0.8;
 }
-
+.player #player-icon, .player #player-info {			
+	-webkit-transition: all 2s; /* Safari */
+	transition: 		all 2s;
+}
 
 
 /*the questions*/

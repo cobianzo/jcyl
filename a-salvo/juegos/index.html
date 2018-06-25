@@ -21,7 +21,7 @@
  -->
     <!-- Custom styles for this template -->
     <link href="js/trivial-js/trivial-pursuit.css" rel="stylesheet">
-
+    <style> .card { background: #336795; } svg { max-width: 100%; }</style>
   </head>
 
   <body>
@@ -30,8 +30,17 @@
       <div class="container ">
         <div class="row">
           <div class="col-12 my-auto">
-            <div class="card card-body mt-5">
-                <div id="playground"></div>                
+            <div class="card card-body my-5">
+              <div class="row">
+                <div class='col-12 col-md-3'>
+                  <a href="#">
+                    <img src="img/titulo-top-left.png" alt="Prevención de riesgos laborales" class="" style='max-width: 170%;'>
+                  </a>
+                </div>
+                <div class='col-12 col-md-9 text-center'>
+                  <div id="playground" class='m-auto'></div>                
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -56,9 +65,9 @@
       $( document ).ready(function() {
           
           theGame = $( '#playground' ).trivialGame({
-             playerNames: [ 'Alvaro', 'Pedro' ],
+             playerNames: [ 'Alvaro', 'Matias' ],
              board_svg_file:    './js/trivial-js/boardtrivial-board.svg',
-             questions_file:    './js/trivial-js/questions.json',
+             questions_file:    './js/trivial-js/questions-1.json',
           });
           console.log(theGame);
       });
@@ -71,7 +80,7 @@
     <script>
       $( document ).ready(function() {
 
-        $('#playground').load('trivial-frame.html');
+        //$('#playground').load('trivial-frame.html');
 
       });
 

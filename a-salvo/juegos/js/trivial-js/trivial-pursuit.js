@@ -235,7 +235,7 @@ How it works:
 				game.questions[typeOfQuestion] = updatedSetOfQuestions;
 
 				// creating the question container, this modal structure depend on bootstrap 4 modal css and  modal js
-				game.jQuestionContainer.append('<div class="question-modal modal hide fade modal-sm mx-auto" data-keyboard="false" data-backdrop="static" tabindex="-1" role="dialog" aria-hidden="true"> \
+				game.jQuestionContainer.append('<div class="question-modal modal hide fade modal-sm mx-auto text-left" data-keyboard="false" data-backdrop="static" tabindex="-1" role="dialog" aria-hidden="true"> \
 					<div class="modal-dialog modal-dialog-centered"> <div class="modal-content">\
 					<div class="modal-header"></div>\
 					<div class="modal-body"><ul></ul></div>\
@@ -323,8 +323,7 @@ How it works:
 					// Logic changes Give turn to next player if answer was not ok. If not, we reactivate the Dice here
 					if (is_right) {
 						// update dice with blink effect
-						game.dice.allowRoll = true;
-						game.dice.jElement.find("#dice-bg").attr('class','casilla_animada orange-bg');
+						game.dice.jElement.addClass('allow-roll');						
 					}
 					else
 						game.fn_giveTurnToNextPlayer();	 	// this reactivates the Dice and updates everything visually for the next player
@@ -366,13 +365,12 @@ How it works:
 
 				// update players icons (size)
 				$.each(game.players, function(index, player) {
-					var scale = (player.number == game.current_player )? 1 : 0.6;
+					var scale = (player.number == game.current_player )? 1 : 0.8;
 					game.fn_updateOnlyScale(player.jPlayerIcon, scale);
 				}); 				 
 
 				// update dice with blink effect
-				game.dice.allowRoll = true;
-				game.dice.jElement.find("#dice-bg").attr('class','casilla_animada orange-bg');
+				game.dice.jElement.addClass('allow-roll');
 
 			}
 
@@ -386,7 +384,7 @@ How it works:
 				
 				// Dice Propierties 
 				this.jElement 	= game.jBoard.find('#dice');   // jQuery('<div></div>').addClass('dice-container').text('Tira el dado');
-				this.allowRoll 	= true;		// - set to false to avoid that clicking on the roll triggers it
+				// this.allowRoll 	= true;		// - now we use the class .allow-roll
 				this.number 	= 0;
 				
 				var gameDice = this;
@@ -398,26 +396,19 @@ How it works:
 
 					// Events for the Dice. 1) click on the dice
 					gameDice.jElement.on('click', function(e){ 
-					
-						// init logic
-						if ( !gameDice.allowRoll )	{
+
+				
+						// no effect if it's not the moment to roll the dice
+						if ( ( ! gameDice.jElement.hasClass('allow-roll') ) )	{
 							alert( 'no lances ahora');
 							return;
 						}
 
-						gameDice.allowRoll 	= false;
+						gameDice.jElement.removeClass('allow-roll'); 
 
-						//init visual 
-						game.dice.jElement.find("#dice-bg").attr('class', 'transparent');
-
+						//init visual 						
 						game.fn_turn(); 
 						
-						
-						
-
-						//game.players[0].fn_movePlayer(7);
-						//game.players[1].fn_movePlayer(3);
-						// game.fn_moveElement( game.players[0].jElement, jQuery('#casilla_3') );
 
 					});
 
@@ -429,11 +420,14 @@ How it works:
 
 				// Dice functions 
 
-				// simulates the animation of the dice rolling with random numbers
+				// simulates the animation of the dice rolling with random numbers. game.dice.number gives the value del dado en la tirada
 				this.fn_rollDice = function() {
 
+					// logic: we set the value of the dice beforehand, and later el paripe de la animacion
 					gameDice.number = Math.floor( ( Math.random() * 6 ) + 1 );
 					
+					// visual
+					gameDice.jElement.addClass('rotating');
 					var max_iterations = 10; 					
 					for ( var j = iteration = 0; j < max_iterations; j++ ) {
 
@@ -441,17 +435,24 @@ How it works:
 						setTimeout( function () { 
 							
 							iteration++;
-							gameDice.jElement.find(' > g').hide().filter('#dice-'+Math.floor( ( Math.random() * 6 ) + 1 )).show();
+							gameDice.jElement.find(' > g').hide().filter('g#dice-'+Math.floor( ( Math.random() * 6 ) + 1 )).show();
 
 							if (iteration == max_iterations)  // in the last iteration
-								gameDice.jElement.find(' > g').hide().filter('#dice-'+gameDice.number).show();
+								{ 
+									gameDice.jElement.find(' > g').hide().filter('g#dice-'+gameDice.number).show();									
+									// gameDice.highlightDice( gameDice.allowRoll );
+									gameDice.jElement.removeClass('rotating');
+								}
 
 						}, j*100 );
 
 					}
 				}
 
-
+				// on_off = [true | false]
+				this.highlightDice 	= function(on_off) {  
+					gameDice.jElement.toggleClass('highlighted', on_off);
+				}
 				
 
 			}
